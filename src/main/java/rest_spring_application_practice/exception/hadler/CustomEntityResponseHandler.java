@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import rest_spring_application_practice.exception.ExceptionResponse;
+import rest_spring_application_practice.exception.exceptionRecords.ExceptionResponse;
 import rest_spring_application_practice.exception.UnsupportedMathOperationException;
 
 import java.util.Date;
@@ -28,6 +28,16 @@ public class CustomEntityResponseHandler extends ResponseEntityExceptionHandler 
 
     @ExceptionHandler(UnsupportedMathOperationException.class)
     public final ResponseEntity<ExceptionResponse> handleBadRequestExceptions(Exception ex, WebRequest request) {
+        ExceptionResponse response = new ExceptionResponse(
+                new Date(),
+                ex.getMessage(),
+                request.getDescription(false)
+        );
+        return new ResponseEntity<> (response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ArithmeticException.class)
+    public final ResponseEntity<ExceptionResponse> handleBadRequestArithmeticExceptions(Exception ex, WebRequest request) {
         ExceptionResponse response = new ExceptionResponse(
                 new Date(),
                 ex.getMessage(),
