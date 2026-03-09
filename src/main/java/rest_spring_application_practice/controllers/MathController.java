@@ -1,30 +1,56 @@
 package rest_spring_application_practice.controllers;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import rest_spring_application_practice.exception.UnsupportedMathOperationException;
+import org.springframework.web.bind.annotation.*;
+import rest_spring_application_practice.service.MathService;
+
+
+import java.util.ArrayList;
+
 
 @RestController
-@RequestMapping("/math")
+@RequestMapping("/math") //Só se usa RequestMapping em topo de classe, em métodos deve-se usar notations especialistas como o GetMapping
 public class MathController {
 
-    @RequestMapping("/sum/{n1}/{n2}")
+    private final MathService mathService;
+
+    public MathController(MathService mathService) {
+        this.mathService = mathService;
+    }
+
+    @GetMapping("/sum/{n1}/{n2}") //Usando GetMapping pois nao existe alteracao, simples operacao matematica.
     public Double sum(@PathVariable String n1, @PathVariable String n2) {
-        if(!isNumeric(n1) || !isNumeric(n2)) throw new UnsupportedMathOperationException("Please enter a numeric value");
 
-        return convertToDouble(n1) + convertToDouble(n2);
+        return  mathService.sum(n1, n2);
     }
 
-    private Double convertToDouble(String strNumber) {
-        if (strNumber == null || strNumber.isEmpty()) throw new UnsupportedMathOperationException("Please enter a numeric value");
-        String number = strNumber.replace(",", ".");
-        return Double.parseDouble(number);
+    @GetMapping("/sub/{n1}/{n2}")
+    public Double sub(@PathVariable String n1, @PathVariable String n2) {
+
+        return   mathService.sub(n1, n2);
     }
 
-    private boolean isNumeric(String strNumber) {
-        if (strNumber == null || strNumber.isEmpty()) return false;
-        String number = strNumber.replace(",", ".");
-        return (number.matches("[-+]?[0-9]*\\.?[0-9]+"));
+    @GetMapping("/mult/{n1}/{n2}")
+    public Double mult(@PathVariable String n1, @PathVariable String n2) {
+
+        return mathService.mult(n1, n2);
     }
+
+    @GetMapping("/div/{n1}/{n2}")
+    public Double division(@PathVariable String n1, @PathVariable String n2) {
+
+        return mathService.division(n1, n2);
+    }
+
+    @GetMapping("/mean")
+    public Double mean(@RequestParam(value = "numbers") ArrayList<String> numbers) {
+
+        return mathService.mean(numbers);
+    }
+
+    @GetMapping("/sqrt/{n1}")
+    public Double sqrt(@PathVariable String n1) {
+
+        return mathService.sqrt(n1);
+    }
+
 }
